@@ -34,6 +34,28 @@ angular.module('listenone').controller('NavigationController', [
     $scope.$on('isdoubanlogin:update', (event, data) => {
       $scope.isDoubanLogin = data;
     });
+    
+    $scope.download_music = (song) => {
+      MediaService.bootstrapTrack(
+        song,
+        (bootinfo) => {
+          notyf.success('正在创建下载歌曲');
+          const mp3url = bootinfo.url
+          const strs = mp3url.split('.'); //字符分割 
+          const houzhui = strs[strs.length-1].substring(0, 3);
+          const filename = song.title +" - "+song.artist;
+          const request = new XMLHttpRequest();
+          request.open("GET", mp3url, true);
+          request.responseType = 'blob';
+          window.open(bootinfo.url)
+          request.onload=function(e){download(x.response, filename+'.'+houzhui);};
+          request.send();
+        },
+        () => {
+          notyf.warning('下载失败，请搜索其他平台');
+        }
+      );
+    }
 
     // isOpenSidebar
 
